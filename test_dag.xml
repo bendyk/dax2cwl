@@ -1,0 +1,41 @@
+<adag xmlns="http://pegasus.isi.edu/schema/DAX"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://pegasus.isi.edu/schema/DAX http://pegasus.isi.edu/schema/dax-2.1.xsd"
+      version="2.1" count="1" index="0" name="montage">
+
+  <filename file="2mass-atlas-990502s-j1420198.fits" link="input"/>
+  <filename file="big_region_20170518_153916_25237.hdr" link="input"/>
+  <filename file="c2mass-atlas-990502s-j1420198.fits" link="output"/>
+
+  <job id="ID000001" name="mProjectPP" version="3.0" level="9" dv-name="mProject1" dv-version="1.0">
+    <argument>
+      -X
+      -x 0.99330
+      <filename file="2mass-atlas-990502s-j1420198.fits"/>
+      <filename file="p2mass-atlas-990502s-j1420198.fits"/>
+      <filename file="big_region_20170518_153916_25237.hdr"/>
+    </argument>
+
+    <uses file="2mass-atlas-990502s-j1420198.fits" link="input" transfer="true"/>
+    <uses file="p2mass-atlas-990502s-j1420198.fits" link="output" register="false" transfer="false"/>
+    <uses file="p2mass-atlas-990502s-j1420198_area.fits" link="output" register="false" transfer="false"/>
+    <uses file="big_region_20170518_153916_25237.hdr" link="input" transfer="true"/>
+  </job>
+
+  <job id="ID000002" name="mDIFF" version="3.0" level="9" dv-name="mDiff1" dv-version="1.0">
+    <argument>
+      -x 0.99330
+      <filename file="p2mass-atlas-990502s-j1420198.fits"/>
+      <filename file="p2mass-atlas-990502s-j1420198_area.fits"/>
+      <filename file="big_region_20170518_153916_25237.hdr"/>
+    </argument>
+
+    <uses file="c2mass-atlas-990502s-j1420198.fits" link="output" transfer="true"/>
+    <uses file="p2mass-atlas-990502s-j1420198.fits" link="input" register="false" transfer="false"/>
+    <uses file="p2mass-atlas-990502s-j1420198_area.fits" link="input" register="false" transfer="false"/>
+    <uses file="big_region_20170518_153916_25237.hdr" link="input" transfer="true"/>
+  </job>
+
+  <child ref="ID000002">
+    <parent ref="ID000001"/>
+  </child>
