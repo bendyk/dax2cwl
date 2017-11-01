@@ -67,9 +67,8 @@ class Executable:
   def get_unbound_inputs(self):
     unbound = []
     for inp in self.inputs:
-      if not("binding" in inp) and "type" == "File":
+      if not("binding" in inp) and (inp["type"] == "File"):
         unbound.append(inp["name"])
-
     return unbound
 
   def get_unbound_outputs(self):
@@ -77,7 +76,7 @@ class Executable:
     for out in self.outputs:
       bound = False
       for inp in self.inputs:
-        if inp["name"] == out["value"] and "binding" in inp:
+        if (inp["name"] == out["value"]) and ("binding" in inp):
           bound = True
      
       if not bound: unbound.append(out['name'])

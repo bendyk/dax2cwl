@@ -31,8 +31,7 @@ class Job:
     regex           = re.compile('.*file="([^"]*)".*link="([^"]*)".*/>')
     unbound_inputs  = self.executable.get_unbound_inputs()
     unbound_outputs = self.executable.get_unbound_outputs()
-
-
+   
     for line in xml_body:
 
       if line.strip().startswith("<uses") and not ("type" in line):
@@ -40,7 +39,7 @@ class Job:
         match  = regex.match(line.strip())
         f_name = match.group(1)
         direct = match.group(2)
-                
+        
         if direct in "input":
           if f_name in self.arguments:
             self.inputs[self.arguments[f_name]] = {"value" : f_name, "type" : "File"}

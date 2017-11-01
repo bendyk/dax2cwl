@@ -18,6 +18,9 @@ def parse_args():
   parser.add_option("-i", "--input", dest="dag_file", action="store",
                     type="string", default="",
                     help="Pegasus dag file")
+  parser.add_option("-o", "--out-dir", dest="out_dir", action="store",
+                    type="string", default="out",
+                    help="output directory")
 
 
   (options, args) = parser.parse_args()
@@ -65,7 +68,7 @@ def main():
 
 
   resolve_names()
-  write_output()
+  write_output(options.out_dir)
 
 
 def parse_job(head, dag):
@@ -143,12 +146,14 @@ def resolve_names():
   return  
 
 
-def write_output():
+def write_output(out_dir):
   data_file     = []
   workflow_file = []
 
+  os.makedirs(out_dir, exist_ok=True)
+
   for name,exe in EXECUTABLES.items():
-    with open (name + ".cwl", "w") as f:
+    with open (out_dir + "/" + name + ".cwl", "w") as f:
       f.write(exe.to_cwl())
 
   for value, external in EXTERNAL_IN.items():
@@ -157,10 +162,10 @@ def write_output():
     else:
       data_file.append('"%s":"%s",' % (external['name'], value))
 
-  with open("wf_data.json", "w") as f:
+  with open(out_dir + "/wf_data.json", "w") as f:
     f.write("{\n" + "\n".join(data_file) + "\n}")
 
-  with open("workflow.cwl", "w") as f:
+  with open(out_dir + "/workflow.cwl", "w") as f:
     f.write("cwlVersion: v1.0\n")
     f.write("class: Workflow\n")
     f.write("inputs:\n")
