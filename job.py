@@ -12,18 +12,21 @@ class Job:
     self.parse_files(xml)
 
   def parse_arguments(self, xml_body):
-    counter = 0
+    counter = 1
     arguments = xml_body[xml_body.index("<argument>")+1 : xml_body.index("</argument>")]
 
     for argument in arguments:
       if argument.strip():
-        counter += 1
 
         if "<filename" in argument:
           f_name = argument.split('"')[1]
           self.arguments[f_name] = self.executable.name_of_binding(counter)
+          counter += 1
         else:
-          self.inputs[self.executable.name_of_binding(counter)] = {"value": argument.strip(), "type": "string"}
+          tmp_args = argument.split()
+          for tmp_arg in tmp_args:
+            self.inputs[self.executable.name_of_binding(counter)] = {"value": tmp_arg, "type": "string"}
+            counter += 1
 
 
   def parse_files(self, xml_body):

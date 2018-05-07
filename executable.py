@@ -12,27 +12,38 @@ class Executable:
 
 
   def parse_arguments(self, xml_body):
-    counter   = 0
+    counter   = 1
     args      = []
     arguments = xml_body[xml_body.index("<argument>")+1 : xml_body.index("</argument>")]
        
+    print(self.name)
     for argument in arguments:
       if argument:
-        counter += 1
         if "<filename" in argument:
+          print(argument.split("<filename"))
           prefix = argument.split("<filename")[0]
           f_name = argument.split('"')[1]
 
           for inp in self.inputs:
             if f_name in inp["value"]:
               inp["binding"] = counter
-              if prefix: inp["prefix"] = prefix
+              print(inp["value"] + " " + str(counter))
+              counter += 1
+              if prefix: 
+                print("prefix: " + prefix)
+                inp["prefix"] = prefix.strip()
+              print(inp)
+              break
 
         else:
-          args.append({"name"    : "in_arg_" + str(len(args)),
-                       "value"   : argument.strip(),
-                       "type"    : "string",
-                       "binding" : counter}) 
+          tmp_arguments = argument.split()
+          for tmp_arg in tmp_arguments: 
+            args.append({"name"    : "in_arg_" + str(len(args)),
+                         "value"   : tmp_arg,
+                         "type"    : "string",
+                         "binding" : counter})
+            print(tmp_arg + " " + str(counter))
+            counter += 1 
 
     self.inputs.extend(args)
         
@@ -113,12 +124,14 @@ outputs:
       if "binding" in inp:
         txt.append("    inputBinding:")
         txt.append("      position: %d" % inp['binding'])
+        if "prefix" in inp:
+          txt.append("      prefix: %s" % inp['prefix'])
 
       inputs.append("\n".join(txt))
 
     for out in self.outputs:
       txt = []
-      txt.append("  %s" % out['name'])
+      txt.append("  %s:" % out['name'])
       txt.append("    type: %s" % out['type'])
       txt.append("    outputBinding:")
       txt.append("      glob: $(inputs.%s)" % out['value'])
